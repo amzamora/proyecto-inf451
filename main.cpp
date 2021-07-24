@@ -2,7 +2,6 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <string>
-#include <fstream>
 #include <math.h>
 using namespace std;
 
@@ -10,18 +9,19 @@ using namespace std;
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "shader.hpp"
+
 #define WIDTH 800
 #define HEIGHT 600
 
 // Prototypes
 // ----------
-unsigned int init_shader(string filename);
 void process_input(GLFWwindow *window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 // Implementations
 // ---------------
-int main () {
+int main() {
 	// Init GLFW
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -29,7 +29,7 @@ int main () {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	// Create window
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "LearnOpenG", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Computación gráfica", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -45,20 +45,11 @@ int main () {
 
 	// Configure OpenGL
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Create shader program
-	unsigned int vertexShader = init_shader("shaders/vertex_shader.vert");
-	unsigned int fragmentShader = init_shader("shaders/fragment_shader.frag");
-
-	unsigned int shaderProgram;
-	shaderProgram = glCreateProgram();
-
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	unsigned int shaderProgram = create_shader("shaders/vertex_shader.vs", "shaders/fragment_shader.fs");
 
 	float vertices[] = {
 		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
@@ -176,50 +167,4 @@ void process_input(GLFWwindow *window) {
 	if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, true);
 	}
-}
-
-string getText (string filename) {
-	string res, str = "";
-	ifstream in;
-	in.open (filename.c_str());
-	if (in.is_open()) {
-		getline (in, str);
-		while (in) {
-			res += str + "\n";
-			getline (in, str);
-		}
-		return res;
-	} else {
-		cerr << "Unable to Open File " << filename << "\n";
-		throw 2;
-	}
-}
-
-unsigned int init_shader(string filename) {
-	string source = getText(filename);
-
-	// Get type of shader
-	unsigned int shader;
-	if (filename.substr(filename.find_last_of (".") + 1) == "vert") {
-		shader = glCreateShader(GL_VERTEX_SHADER);
-	}
-	else {
-		shader = glCreateShader(GL_FRAGMENT_SHADER);
-	}
-
-	// Compile shader
-	const char *source_as_c_str = source.c_str();
-	glShaderSource(shader, 1, &source_as_c_str, NULL);
-	glCompileShader(shader);
-
-	// Check for errors
-	int success;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success) {
-		char infoLog[512];
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-		cout << "Error compiling shader: " << infoLog << ":c\n";
-	}
-
-	return shader;
 }
