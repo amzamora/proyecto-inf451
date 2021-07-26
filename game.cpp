@@ -1,12 +1,17 @@
 #include "game.hpp"
 #include "graphics.hpp"
 #include "nodes/cube.hpp"
+#include "nodes/quad.hpp"
 
 #include <iostream>
 Game::Game() {
 	std::shared_ptr<Cube> cube = std::make_shared<Cube>();
 	cube->angle[1] = -45.0f;
 	this->nodes.push_back(std::dynamic_pointer_cast<game::Node>(cube));
+
+	std::shared_ptr<Quad> quad = std::make_shared<Quad>();
+	quad->angle = -45.0f;
+	this->nodes.push_back(std::dynamic_pointer_cast<game::Node>(quad));
 }
 
 void Game::update(GLFWwindow *window) {

@@ -18,6 +18,18 @@ namespace game {
 		virtual void draw() {}
 		virtual ~Node() {}
 	};
+
+	struct Node2d : Node {
+		glm::vec2 position;
+	 	float angle;
+		glm::vec2 scale;
+
+		Node2d() : position(glm::vec2(0.0f, 0.0f)), angle(0.0f), scale(glm::vec2(0.0f, 0.0f)) {}
+		Node2d(glm::vec2 position) : position(position), angle(0.0f), scale(glm::vec2(0.0f, 0.0f)) {}
+		virtual void update(GLFWwindow *window) {}
+		virtual void draw() {}
+		virtual ~Node2d() {}
+	};
 }
 
 class Game {

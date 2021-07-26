@@ -7,10 +7,12 @@ GLFWwindow* window;
 unsigned int width;
 unsigned int height;
 unsigned int shader_program;
+unsigned int shader_program_2d;
 unsigned int cube_VAO;
 unsigned int plane_VAO;
 glm::mat4 view;
 glm::mat4 projection;
+glm::mat4 projection_ortho;
 
 GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 	// Init GLFW
@@ -47,6 +49,7 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 
 	// Create shader program
 	shader_program = create_shader("shaders/vertex_shader.vs", "shaders/fragment_shader.fs");
+	shader_program_2d = create_shader("shaders/2d.vs", "shaders/2d.fs");
 
 	// Load geometry
 	float vertices[] = {
@@ -109,12 +112,12 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 	glEnableVertexAttribArray(1);
 
 	float plane_vertices[] = {
-		 0.5f,  0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
-		 0.5f,  0.0f, -0.5f,  0.0f,  0.0f,  0.0f,
-		-0.5f,  0.0f, -0.5f,  0.0f,  0.0f,  0.0f,
-		 0.5f,  0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
-		-0.5f,  0.0f,  0.5f,  0.0f,  0.0f,  0.0f,
-		-0.5f,  0.0f, -0.5f,  0.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,
+		 0.5f, -0.5f,
+		-0.5f, -0.5f,
+		 0.5f,  0.5f,
+		-0.5f,  0.5f,
+		-0.5f, -0.5f
 	};
 
 	unsigned int plane_VBO;
@@ -126,11 +129,8 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 	glBindBuffer(GL_ARRAY_BUFFER, plane_VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
 
 	// Set up transformations
 	view = glm::mat4(1.0f);
@@ -140,6 +140,8 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 
 	projection = glm::mat4(1.0f);
 	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+
+	projection_ortho = glm::ortho(0.0f, (float)width, 0.0f, (float)height, 0.1f, 100.0f);
 
 	return window;
 }
@@ -160,7 +162,7 @@ void graphics::draw_cube(glm::mat4 model) {
 	// Set object color
 	glUniform3f(glGetUniformLocation(shader_program, "objectColor"), 1.0f, 1.0f, 1.0f);
 
-	// Pase transformatiosn to shader
+	// Pass transformations to shader
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, &model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "view"), 1, GL_FALSE, &view[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, &projection[0][0]);
@@ -174,25 +176,24 @@ void graphics::draw_cube(glm::mat4 model) {
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void graphics::draw_plane(glm::mat4 model) {
+void graphics::draw_quad(glm::mat4 model2) {
 	// Select shader
-	glUseProgram(shader_program);
+	glUseProgram(shader_program_2d);
+
+	// Pase transformatiosn to shader
+	glm::mat4 model = glm::mat4(1.0f);
+	//model = glm::scale(model, glm::vec3(100.0f, 100.f, 1.0f));
+	//model = glm::translate(model, glm::vec3(-0.2f, 0.0f, 0.0f));
+	model = glm::rotate(model, -45.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, &model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, &projection_ortho[0][0]);
 
 	// Set object color
 	glUniform3f(glGetUniformLocation(shader_program, "objectColor"), 0.6f, 0.6f, 0.6f);
 
-	// Pase transformatiosn to shader
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "view"), 1, GL_FALSE, &view[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, &projection[0][0]);
-
-	// Pass light postion and color to shader
-	glUniform3f(glGetUniformLocation(shader_program, "lightPos"), 0.0f, 1.0f, 1.0f);
-	glUniform3f(glGetUniformLocation(shader_program, "lightColor"), 1.0f, 1.0f, 1.0f);
-
 	// Draw
 	glBindVertexArray(plane_VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLES, 0, 12);
 }
 
 void graphics::render() {
