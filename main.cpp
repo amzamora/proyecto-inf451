@@ -30,6 +30,12 @@ int main() {
 		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-30.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		graphics::draw_cube(model);
 
+		// Draw plane
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
+		model = glm::scale(model, glm::vec3(4.0f, 1.0f, 2.0f));
+		graphics::draw_plane(model);
+
 		// Render
 		graphics::render();
 

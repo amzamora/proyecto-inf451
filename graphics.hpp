@@ -14,6 +14,7 @@ namespace graphics {
 	void close();
 	void clear();
 	void draw_cube(glm::mat4 model);
+	void draw_plane(glm::mat4 model);
 	void render();
 }
 
