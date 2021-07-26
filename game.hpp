@@ -12,18 +12,11 @@ namespace game {
 		glm::vec3 angle;
 		glm::vec3 scale;
 
+		Node() : position(glm::vec3(0.0f, 0.0f, 0.0f)), angle(glm::vec3(0.0f, 0.0f, 0.0f)), scale(glm::vec3(0.0f, 0.0f, 0.0f)) {}
 		Node(glm::vec3 position) : position(position), angle(glm::vec3(0.0f, 0.0f, 0.0f)), scale(glm::vec3(0.0f, 0.0f, 0.0f)) {}
 		virtual void update(GLFWwindow *window) {}
 		virtual void draw() {}
 		virtual ~Node() {}
-	};
-
-	struct Cube : Node {
-		virtual void update(GLFWwindow *window);
-		virtual void draw();
-
-		Cube(glm::vec3 postion) : Node(position) {}
-		~Cube() {}
 	};
 }
 
