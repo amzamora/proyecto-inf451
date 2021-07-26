@@ -29,6 +29,10 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 	::width = width;
 	::height = height;
 	glfwMakeContextCurrent(window);
+	glfwSetWindowAspectRatio(window, width, height);
+	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) {
+		glViewport(0, 0, width, height);
+	});
 
 	// Load opengl functions
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
