@@ -10,9 +10,6 @@ unsigned int shader_program;
 unsigned int shader_program_2d;
 unsigned int cube_VAO;
 unsigned int plane_VAO;
-glm::mat4 view;
-glm::mat4 projection;
-glm::mat4 projection_ortho;
 
 GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 	// Init GLFW
@@ -132,17 +129,6 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	// Set up transformations
-	view = glm::mat4(1.0f);
-	view = glm::lookAt(glm::vec3(0.0f, 1.5f, 2.5f),
-					   glm::vec3(0.0f, 0.0f, 0.0f),
-					   glm::vec3(0.0f, 1.0f, 0.0f));
-
-	projection = glm::mat4(1.0f);
-	projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
-
-	projection_ortho = glm::ortho(0.0f, (float)width, 0.0f, (float)height, 0.1f, 100.0f);
-
 	return window;
 }
 
@@ -156,6 +142,13 @@ void graphics::clear() {
 }
 
 void graphics::draw_cube(glm::mat4 model) {
+	// Set up transformations
+	glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 1.5f, 2.5f),
+					   glm::vec3(0.0f, 0.0f, 0.0f),
+					   glm::vec3(0.0f, 1.0f, 0.0f));
+
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 100.0f);
+
 	// Select shader
 	glUseProgram(shader_program);
 
@@ -177,19 +170,23 @@ void graphics::draw_cube(glm::mat4 model) {
 }
 
 void graphics::draw_quad(glm::mat4 model2) {
+	glm::mat4 projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height, 0.1f, 100.0f);
+
 	// Select shader
 	glUseProgram(shader_program_2d);
 
 	// Pase transformatiosn to shader
 	glm::mat4 model = glm::mat4(1.0f);
-	//model = glm::scale(model, glm::vec3(100.0f, 100.f, 1.0f));
-	//model = glm::translate(model, glm::vec3(-0.2f, 0.0f, 0.0f));
-	model = glm::rotate(model, -45.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "model"), 1, GL_FALSE, &model[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(shader_program, "projection"), 1, GL_FALSE, &projection_ortho[0][0]);
+	//model = glm::rotate(model, -45.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(400.0f, 400.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(1.0f, -1.0f, 1.0f));
+	model = glm::translate(model, glm::vec3(0.7f, -0.7f, 0.0f));
+	//model = glm::translate(model, glm::vec3(100.0f, 100.0f, 0.0f));
+	glUniformMatrix4fv(glGetUniformLocation(shader_program_2d, "model"), 1, GL_FALSE, &model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(shader_program_2d, "projection"), 1, GL_FALSE, &projection[0][0]);
 
 	// Set object color
-	glUniform3f(glGetUniformLocation(shader_program, "objectColor"), 0.6f, 0.6f, 0.6f);
+	glUniform3f(glGetUniformLocation(shader_program_2d, "objectColor"), 0.6f, 0.6f, 0.6f);
 
 	// Draw
 	glBindVertexArray(plane_VAO);
