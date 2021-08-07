@@ -169,24 +169,25 @@ void graphics::draw_cube(glm::mat4 model) {
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void graphics::draw_quad(glm::mat4 model2) {
+void graphics::draw_quad(glm::mat4 model) {
+	graphics::draw_quad(model, glm::vec3(0.6f, 0.6f, 0.6f));
+}
+
+void graphics::draw_quad(glm::mat4 model, glm::vec3 color) {
 	glm::mat4 projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height, 0.1f, 100.0f);
 
 	// Select shader
 	glUseProgram(shader_program_2d);
 
 	// Pase transformatiosn to shader
-	glm::mat4 model = glm::mat4(1.0f);
-	//model = glm::rotate(model, -45.0f, glm::vec3(0.0f, 0.0f, 1.0f));
-	model = glm::scale(model, glm::vec3(400.0f, 400.0f, 1.0f));
-	model = glm::scale(model, glm::vec3(1.0f, -1.0f, 1.0f));
-	model = glm::translate(model, glm::vec3(0.7f, -0.7f, 0.0f));
-	//model = glm::translate(model, glm::vec3(100.0f, 100.0f, 0.0f));
-	glUniformMatrix4fv(glGetUniformLocation(shader_program_2d, "model"), 1, GL_FALSE, &model[0][0]);
+	glm::mat4 real_model = glm::mat4(1.0f);
+	real_model = glm::translate(real_model, glm::vec3((width / 2.0f), (height / 2.0f), 0.0f));
+	real_model = real_model * model;
+	glUniformMatrix4fv(glGetUniformLocation(shader_program_2d, "model"), 1, GL_FALSE, &real_model[0][0]);
 	glUniformMatrix4fv(glGetUniformLocation(shader_program_2d, "projection"), 1, GL_FALSE, &projection[0][0]);
 
 	// Set object color
-	glUniform3f(glGetUniformLocation(shader_program_2d, "objectColor"), 0.6f, 0.6f, 0.6f);
+	glUniform3f(glGetUniformLocation(shader_program_2d, "objectColor"), color[0], color[1], color[2]);
 
 	// Draw
 	glBindVertexArray(plane_VAO);

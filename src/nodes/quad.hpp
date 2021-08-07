@@ -6,6 +6,9 @@
 struct Quad : game::Node2d {
 	virtual void update(GLFWwindow *window);
 	virtual void draw();
+	float width = 100.0f;
+	float height = 100.0f;
+	glm::vec3 color;
 
 	Quad() : Node2d() {}
 	Quad(glm::vec2 position) : Node2d(position) {}
