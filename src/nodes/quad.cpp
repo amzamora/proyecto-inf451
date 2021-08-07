@@ -1,7 +1,26 @@
 #include "quad.hpp"
 
 void Quad::update(GLFWwindow *window) {
+	glm::vec2 mouse_pos = Game::instance().input.mouse_pos;
 
+	if (!this->dragged && !Game::instance().object_being_dragged) {
+		if (Game::instance().input.mouse_button_left_pressed) {
+			if (fabs(this->position[0] - mouse_pos[0]) <= (this->width / 2.0f) && fabs(this->position[1] - mouse_pos[1]) <= (this->height / 2.0f)) {
+				this->drag_position = glm::vec2(this->position[0] - mouse_pos[0], this->position[1] - mouse_pos[1]);
+				this->dragged = true;
+				Game::instance().object_being_dragged = true;
+			}
+		}
+	}
+	else if (this->dragged) {
+		if (!Game::instance().input.mouse_button_left_pressed) {
+			this->dragged = false;
+			Game::instance().object_being_dragged = false;
+		}
+		else {
+			this->position = mouse_pos + this->drag_position;
+		}
+	}
 }
 
 void Quad::draw() {

@@ -39,10 +39,10 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 
 	glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
 		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-			Game::instance().input.left_mouse_button = true;
+			Game::instance().input.mouse_button_left_pressed = true;
 		}
-		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-			Game::instance().input.left_mouse_button = false;
+		else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+			Game::instance().input.mouse_button_left_pressed = false;
 		}
 	});
 

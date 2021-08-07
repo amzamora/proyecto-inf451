@@ -4,6 +4,6 @@ To do:
 - [x] Dibujar cubo
 - [x] Poder crear cuadrilateros
 - [ ] Poder hacer picking con los cuadrilateros
-    - [ ] Arrastrar
+    - [x] Arrastrar
     - [ ] Hacer picking
 - [ ] Poder asignarles texturas

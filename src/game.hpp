@@ -8,7 +8,7 @@
 
 namespace game {
 	struct Input {
-		bool left_mouse_button = false;
+		bool mouse_button_left_pressed = false;
 		glm::vec2 mouse_pos = glm::vec2(0.0f, 0.0f);
 	};
 
@@ -46,6 +46,7 @@ public:
 
 	game::Input input;
 	std::vector<std::shared_ptr<game::Node>> nodes;
+	bool object_being_dragged = false;
 	// std::unordered_map<std::string, Font> fonts;
 	// std::unordered_map<std::string, Sound> sound_effects;
 	// std::unordered_map<std::string, Texture2D> textures;
