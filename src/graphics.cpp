@@ -43,6 +43,8 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glEnable(GL_MULTISAMPLE);
 
 	// Create shader program
 	shader_program = create_shader("shaders/vertex_shader.vs", "shaders/fragment_shader.fs");
