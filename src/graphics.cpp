@@ -2,6 +2,7 @@
 
 #include "graphics.hpp"
 #include "shader.hpp"
+#include "game.hpp"
 
 GLFWwindow* window;
 unsigned int width;
@@ -30,8 +31,23 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 	::height = height;
 	glfwMakeContextCurrent(window);
 	glfwSetWindowAspectRatio(window, width, height);
+
+	// Handle input
 	glfwSetFramebufferSizeCallback(window, [](GLFWwindow* window, int width, int height) {
 		glViewport(0, 0, width, height);
+	});
+
+	glfwSetMouseButtonCallback(window, [](GLFWwindow* window, int button, int action, int mods) {
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+			Game::instance().input.left_mouse_button = true;
+		}
+		if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+			Game::instance().input.left_mouse_button = false;
+		}
+	});
+
+	glfwSetCursorPosCallback(window, [](GLFWwindow* window, double xpos, double ypos) {
+		Game::instance().input.mouse_pos = glm::vec2(xpos - ::width / 2.0f, ::height / 2.0f - ypos);
 	});
 
 	// Load opengl functions

@@ -7,6 +7,11 @@
 #include "graphics.hpp"
 
 namespace game {
+	struct Input {
+		bool left_mouse_button = false;
+		glm::vec2 mouse_pos = glm::vec2(0.0f, 0.0f);
+	};
+
 	struct Node {
 		glm::vec3 position;
 		glm::vec3 angle;
@@ -39,6 +44,7 @@ public:
 		return instance;
 	}
 
+	game::Input input;
 	std::vector<std::shared_ptr<game::Node>> nodes;
 	// std::unordered_map<std::string, Font> fonts;
 	// std::unordered_map<std::string, Sound> sound_effects;

@@ -9,6 +9,7 @@ struct Quad : game::Node2d {
 	float width = 100.0f;
 	float height = 100.0f;
 	glm::vec3 color;
+	bool dragged = false;
 
 	Quad() : Node2d() {}
 	Quad(glm::vec2 position) : Node2d(position) {}

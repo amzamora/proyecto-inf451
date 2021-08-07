@@ -2,12 +2,6 @@
 
 #include "game.hpp"
 
-// Prototypes
-// ----------
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-
-// Implementations
-// ---------------
 int main() {
 	// Create window
 	GLFWwindow* window = graphics::create_window(800, 600, "Proyecto");
