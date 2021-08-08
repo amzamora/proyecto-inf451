@@ -14,8 +14,7 @@ namespace graphics {
 	void close();
 	void clear();
 	void draw_cube(glm::mat4 model);
-	void draw_quad(glm::mat4 model);
-	void draw_quad(glm::mat4 model, glm::vec3 color);
+	void draw_quad(glm::vec2 vertices[], glm::mat4 model, glm::vec3 color);
 	void render();
 }
 

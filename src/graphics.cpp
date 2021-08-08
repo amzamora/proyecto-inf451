@@ -3,6 +3,7 @@
 #include "graphics.hpp"
 #include "shader.hpp"
 #include "game.hpp"
+#include "utilities.hpp"
 
 GLFWwindow* window;
 unsigned int width;
@@ -187,11 +188,40 @@ void graphics::draw_cube(glm::mat4 model) {
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
-void graphics::draw_quad(glm::mat4 model) {
-	graphics::draw_quad(model, glm::vec3(0.6f, 0.6f, 0.6f));
-}
+void graphics::draw_quad(glm::vec2 vertices[], glm::mat4 model, glm::vec3 color) {
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 
-void graphics::draw_quad(glm::mat4 model, glm::vec3 color) {
+	// Pass vertices to the gpu
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, &vertices[0], GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*) 0);
+	glEnableVertexAttribArray(0);
+
+	int concave_point = 0;
+	for (int i = 0; i < 4; i++) {
+		glm::vec2 triangle[] = {vertices[(i + 1) % 4], vertices[(i + 2) % 4], vertices[(i + 3) % 4]};
+		if (is_inside_triangle(triangle, vertices[i])) {
+			concave_point = i;
+		}
+	}
+
+	// Put indices in GPU
+	int indices[] = {
+		concave_point, (concave_point + 1) % 4,  (concave_point + 2) % 4,
+		(concave_point + 2) % 4, (concave_point + 3) % 4, (concave_point + 4) % 4
+	};
+
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 6, &indices[0], GL_STATIC_DRAW);
+
+	// Make projection matrix
 	glm::mat4 projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height, 0.1f, 100.0f);
 
 	// Select shader
@@ -208,8 +238,8 @@ void graphics::draw_quad(glm::mat4 model, glm::vec3 color) {
 	glUniform3f(glGetUniformLocation(shader_program_2d, "objectColor"), color[0], color[1], color[2]);
 
 	// Draw
-	glBindVertexArray(plane_VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 12);
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }
 
 void graphics::render() {
