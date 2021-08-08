@@ -5,5 +5,5 @@ To do:
 - [x] Poder crear cuadrilateros
 - [ ] Poder hacer picking con los cuadrilateros
     - [x] Arrastrar
-    - [ ] Hacer picking
+    - [x] Hacer picking
 - [ ] Poder asignarles texturas

@@ -5,7 +5,28 @@ void Quad::update(GLFWwindow *window) {
 	glm::vec2 mouse_pos = Game::instance().input.mouse_pos;
 	if (!this->dragged && !Game::instance().object_being_dragged) {
 		if (Game::instance().input.mouse_button_left_pressed) {
-			if (is_inside_quad(this->vertices, mouse_pos - this->position)) {
+			if (glm::distance(mouse_pos, this->vertices[0] + this->position) < 10.0f) {
+				this->dragged = true;
+				this->dragged_vertex = 0;
+				Game::instance().object_being_dragged = true;
+
+			}
+			else if (glm::distance(mouse_pos, this->vertices[1] + this->position) < 10.0f) {
+				this->dragged = true;
+				this->dragged_vertex = 1;
+				Game::instance().object_being_dragged = true;
+			}
+			else if (glm::distance(mouse_pos, this->vertices[2] + this->position) < 10.0f) {
+				this->dragged = true;
+				this->dragged_vertex = 2;
+				Game::instance().object_being_dragged = true;
+			}
+			else if (glm::distance(mouse_pos, this->vertices[3] + this->position) < 10.0f) {
+				this->dragged = true;
+				this->dragged_vertex = 3;
+				Game::instance().object_being_dragged = true;
+			}
+			else if (is_inside_quad(&(this->vertices[0]), mouse_pos - this->position)) {
 				this->drag_position = glm::vec2(this->position[0] - mouse_pos[0], this->position[1] - mouse_pos[1]);
 				this->dragged = true;
 				Game::instance().object_being_dragged = true;
@@ -16,6 +37,10 @@ void Quad::update(GLFWwindow *window) {
 		if (!Game::instance().input.mouse_button_left_pressed) {
 			this->dragged = false;
 			Game::instance().object_being_dragged = false;
+			this->dragged_vertex = -1;
+		}
+		else if (this->dragged_vertex != -1) {
+			this->vertices[this->dragged_vertex] = mouse_pos - this->position;
 		}
 		else {
 			this->position = mouse_pos + this->drag_position;

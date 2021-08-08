@@ -8,8 +8,9 @@ struct Quad : game::Node2d {
 	virtual void draw();
 	glm::vec3 color;
 	bool dragged = false;
+	int dragged_vertex = -1;
 	glm::vec2 drag_position;
-	glm::vec2 vertices[4] = {glm::vec2(-50.0f, 50.0f), glm::vec2(-50.0f, -50.0f), glm::vec2(50.0f, -50.0f), glm::vec2(50.0f, 50.0f)};
+	std::vector<glm::vec2> vertices = {glm::vec2(-50.0f, 50.0f), glm::vec2(-50.0f, -50.0f), glm::vec2(50.0f, -50.0f), glm::vec2(50.0f, 50.0f)};
 
 	Quad() : Node2d() {}
 	Quad(glm::vec2 position) : Node2d(position) {}
