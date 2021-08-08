@@ -40,7 +40,7 @@ void Quad::update(GLFWwindow *window) {
 			this->dragged_vertex = -1;
 		}
 		else if (this->dragged_vertex != -1) {
-			this->vertices[this->dragged_vertex] = mouse_pos - this->position;
+			this->vertices[this->dragged_vertex] = mouse_pos - this->position + glm::vec2(-3.0f, 7.0f);
 		}
 		else {
 			this->position = mouse_pos + this->drag_position;
