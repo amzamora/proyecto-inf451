@@ -14,6 +14,23 @@ void Quad::update(GLFWwindow *window) {
 				this->drag_position = glm::vec2(this->position[0] - mouse_pos[0], this->position[1] - mouse_pos[1]);
 				this->dragged = true;
 				Game::instance().object_being_dragged = true;
+
+				if (Game::instance().quad_selected) {
+					for (size_t i = 0; i < Game::instance().nodes.size(); i++) {
+						if (std::dynamic_pointer_cast<Quad>(Game::instance().nodes[i])) {
+							std::dynamic_pointer_cast<Quad>(Game::instance().nodes[i])->selected = false;
+						}
+					}
+				}
+				this->selected = true;
+				Game::instance().quad_selected = true;
+			}
+			else {
+				// if (this->selected) {
+				// 	this->selected = false;
+				// 	Game::instance().quad_selected = false;
+				// 	printf("unselected\n");
+				// }
 			}
 		}
 	}
@@ -37,6 +54,10 @@ void Quad::draw() {
 	model = glm::translate(model, glm::vec3(this->position[0], this->position[1], 0.0f));
 	model = glm::rotate(model, glm::radians(this->angle), glm::vec3(0.0f, 0.0f, 1.0f));
 	graphics::draw_quad(this->vertices, model, this->color);
+
+	if (this->selected) {
+		this->draw_ui();
+	}
 }
 
 int Quad::is_mouse_on_vertex(glm::vec2 mouse_pos) {
@@ -46,4 +67,18 @@ int Quad::is_mouse_on_vertex(glm::vec2 mouse_pos) {
 		}
 	}
 	return -1;
+}
+
+void Quad::draw_ui() {
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::Begin("Quad");
+	ImGui::ColorEdit3("Color", (float*)&(this->color.r));
+
+	ImGui::End();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

@@ -48,6 +48,7 @@ public:
 	game::Input input;
 	std::vector<std::shared_ptr<game::Node>> nodes;
 	bool object_being_dragged = false;
+	bool quad_selected = false;
 	// std::unordered_map<std::string, Font> fonts;
 	// std::unordered_map<std::string, Sound> sound_effects;
 	// std::unordered_map<std::string, Texture2D> textures;
