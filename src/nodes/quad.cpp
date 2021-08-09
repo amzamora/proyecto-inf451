@@ -4,7 +4,7 @@
 void Quad::update(GLFWwindow *window) {
 	glm::vec2 mouse_pos = Game::instance().input.mouse_pos;
 	if (!this->dragged && !Game::instance().object_being_dragged) {
-		if (Game::instance().input.mouse_button_left_pressed) {
+		if (Game::instance().input.mouse_button_left_just_pressed) {
 			if (this->is_mouse_on_vertex(mouse_pos) != -1) {
 				this->dragged = true;
 				this->dragged_vertex = this->is_mouse_on_vertex(mouse_pos);

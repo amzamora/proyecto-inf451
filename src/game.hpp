@@ -9,6 +9,7 @@
 namespace game {
 	struct Input {
 		bool mouse_button_left_pressed = false;
+		bool mouse_button_left_just_pressed = false;
 		glm::vec2 mouse_pos = glm::vec2(0.0f, 0.0f);
 	};
 

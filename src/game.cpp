@@ -31,6 +31,8 @@ void Game::update(GLFWwindow *window) {
 	for (size_t i = 0; i < this->nodes.size(); i++) {
 		this->nodes[i]->update(window);
 	}
+
+	this->input.mouse_button_left_just_pressed = false;
 }
 
 void Game::draw() {
