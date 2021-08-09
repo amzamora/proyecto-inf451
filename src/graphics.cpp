@@ -16,6 +16,7 @@ unsigned int plane_VAO;
 GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 	// Init GLFW
 	glfwInit();
+	const char* glsl_version = "#version 130";
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -56,6 +57,13 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		exit(EXIT_FAILURE);
 	}
+	// Setup init imgui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
 
 	// Configure OpenGL
 	glEnable(GL_DEPTH_TEST);
