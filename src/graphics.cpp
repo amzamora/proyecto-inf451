@@ -10,6 +10,7 @@ unsigned int width;
 unsigned int height;
 unsigned int shader_program;
 unsigned int shader_program_2d;
+unsigned int shader_program_2d_texture;
 unsigned int cube_VAO;
 unsigned int plane_VAO;
 
@@ -75,6 +76,7 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 	// Create shader program
 	shader_program = create_shader("shaders/vertex_shader.vs", "shaders/fragment_shader.fs");
 	shader_program_2d = create_shader("shaders/2d.vs", "shaders/2d.fs");
+	shader_program_2d_texture = create_shader("shaders/2d-texture.vs", "shaders/2d-texture.fs");
 
 	// Load geometry
 	float vertices[] = {
@@ -247,6 +249,78 @@ void graphics::draw_quad(std::vector<glm::vec2> vertices, glm::mat4 model, glm::
 
 	// Set object color
 	glUniform3f(glGetUniformLocation(shader_program_2d, "objectColor"), color[0], color[1], color[2]);
+
+	// Draw
+	glBindVertexArray(VAO);
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+}
+
+void graphics::draw_quad(std::vector<glm::vec2> vertices, glm::mat4 model, std::string texture_path) {
+	unsigned int VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+
+	if (Game::instance().textures.find(texture_path) == Game::instance().textures.end()) {
+		Game::instance().load_texture(texture_path);
+	}
+	game::Texture texture = Game::instance().textures[texture_path];
+
+	float data[] = {
+		vertices[0].x, vertices[0].y, 0.0, 1.0,
+		vertices[1].x, vertices[1].y, 0.0, 0.0,
+		vertices[2].x, vertices[2].y, 1.0, 0.0,
+		vertices[3].x, vertices[3].y, 1.0, 1.0
+	};
+
+	// Pass vertices to the gpu
+	unsigned int VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 4 * vertices.size(), &data[0], GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*) 0);
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	int concave_point = 0;
+	int vertices_size = (int) vertices.size();
+	for (int i = 0; i < vertices.size(); i++) {
+		glm::vec2 triangle[] = {vertices[(i + 1) % vertices.size()], vertices[(i + 2) % vertices_size], vertices[(i + 3) % vertices_size]};
+		if (is_inside_triangle(triangle, vertices[i])) {
+			concave_point = i;
+		}
+	}
+
+	// Put indices in GPU
+	size_t n = 6;
+	int indices[n] = {
+		concave_point, (concave_point + 1) % vertices_size,  (concave_point + 2) % vertices_size,
+		(concave_point + 2) % vertices_size, (concave_point + 3) % vertices_size, (concave_point + 4) % vertices_size
+	};
+
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * n, &indices[0], GL_STATIC_DRAW);
+
+	// Make projection matrix
+	glm::mat4 projection = glm::ortho(0.0f, (float)width, 0.0f, (float)height, 0.1f, 100.0f);
+
+	// Select shader
+	glUseProgram(shader_program_2d_texture);
+
+	// Pase transformatiosn to shader
+	glm::mat4 real_model = glm::mat4(1.0f);
+	real_model = glm::translate(real_model, glm::vec3((width / 2.0f), (height / 2.0f), 0.0f));
+	real_model = real_model * model;
+	glUniformMatrix4fv(glGetUniformLocation(shader_program_2d_texture, "model"), 1, GL_FALSE, &real_model[0][0]);
+	glUniformMatrix4fv(glGetUniformLocation(shader_program_2d_texture, "projection"), 1, GL_FALSE, &projection[0][0]);
+
+	glUniform1i(glGetUniformLocation(shader_program_2d_texture, "ourTexture"), 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, texture.id);
 
 	// Draw
 	glBindVertexArray(VAO);

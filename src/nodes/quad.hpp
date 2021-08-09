@@ -7,6 +7,7 @@ struct Quad : game::Node2d {
 	virtual void update(GLFWwindow *window);
 	virtual void draw();
 	glm::vec3 color;
+	std::string texture = "";
 	bool dragged = false;
 	int dragged_vertex = -1;
 	glm::vec2 drag_position;

@@ -13,6 +13,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
+#include <string>
 
 namespace graphics {
 	GLFWwindow* create_window(int width, int height, const char* title);
@@ -20,6 +21,7 @@ namespace graphics {
 	void clear();
 	void draw_cube(glm::mat4 model);
 	void draw_quad(std::vector<glm::vec2> vertices, glm::mat4 model, glm::vec3 color);
+	void draw_quad(std::vector<glm::vec2> vertices, glm::mat4 model, std::string texture_path);
 	void render();
 }
 

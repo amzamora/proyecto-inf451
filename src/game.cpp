@@ -3,6 +3,9 @@
 #include "nodes/cube.hpp"
 #include "nodes/quad.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 Game::Game() {
 	std::shared_ptr<Cube> cube = std::make_shared<Cube>();
 	cube->angle[1] = -45.0f;
@@ -10,6 +13,7 @@ Game::Game() {
 
 	std::shared_ptr<Quad> quad1 = std::make_shared<Quad>(glm::vec2(-350.0f, -250.0f));
 	quad1->color = glm::vec3(0.0f, 1.0f, 1.0f);
+	quad1->texture = "assets/container.jpg";
 	this->nodes.push_back(std::dynamic_pointer_cast<game::Node>(quad1));
 
 	std::shared_ptr<Quad> quad2 = std::make_shared<Quad>(glm::vec2(-250.0f, -250.0f));
@@ -41,10 +45,35 @@ void Game::draw() {
 	for (size_t i = 0; i < this->nodes.size(); i++) {
 		this->nodes[i]->draw();
 	}
-	
+
 	graphics::render();
 }
 
 Game::~Game() {
 
+}
+
+void Game::load_texture(std::string path) {
+	// Load image
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
+
+	//printf("%s\n", path.c_str());
+	unsigned char *data = stbi_load(realpath(path.c_str(), NULL), &width, &height, &nrChannels, 0);
+
+	// Create texture
+	unsigned int id;
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	game::Texture texture = {id, width, height};
+	this->textures[path] = texture;
+
+	// Free stuff
+	stbi_image_free(data);
 }

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 #include "graphics.hpp"
 
@@ -11,6 +12,12 @@ namespace game {
 		bool mouse_button_left_pressed = false;
 		bool mouse_button_left_just_pressed = false;
 		glm::vec2 mouse_pos = glm::vec2(0.0f, 0.0f);
+	};
+
+	struct Texture {
+		unsigned int id;
+		int width;
+		int height;
 	};
 
 	struct Node {
@@ -47,6 +54,7 @@ public:
 
 	game::Input input;
 	std::vector<std::shared_ptr<game::Node>> nodes;
+	std::unordered_map<std::string, game::Texture> textures;
 	bool object_being_dragged = false;
 	bool quad_selected = false;
 	// std::unordered_map<std::string, Font> fonts;
@@ -56,6 +64,8 @@ public:
 
 	void update(GLFWwindow *window);
 	void draw();
+
+	void load_texture(std::string path);
 
 private:
 	Game();

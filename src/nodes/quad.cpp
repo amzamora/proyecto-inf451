@@ -53,7 +53,12 @@ void Quad::draw() {
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(this->position[0], this->position[1], 0.0f));
 	model = glm::rotate(model, glm::radians(this->angle), glm::vec3(0.0f, 0.0f, 1.0f));
-	graphics::draw_quad(this->vertices, model, this->color);
+	if (this->texture != "") {
+		graphics::draw_quad(this->vertices, model, this->texture);
+	}
+	else {
+		graphics::draw_quad(this->vertices, model, this->color);
+	}
 
 	if (this->selected) {
 		this->draw_ui();
