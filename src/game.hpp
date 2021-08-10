@@ -92,6 +92,7 @@ public:
 	void draw();
 
 	void load_texture(std::string path);
+	void randomize_gifs();
 
 private:
 	Game();

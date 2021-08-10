@@ -5,6 +5,9 @@
 
 #include "gifdec/gifdec.h"
 
+#include <experimental/filesystem>
+#include <random>
+
 Game::Game() {
 	std::shared_ptr<Cube> cube = std::make_shared<Cube>();
 	cube->angle[1] = -45.0f;
@@ -22,7 +25,6 @@ Game::Game() {
 
 	std::shared_ptr<Quad> quad3 = std::make_shared<Quad>(glm::vec2(-150.0f, -250.0f));
 	quad3->name = "Quad 3";
-	quad3->texture = "assets/tumblr.gif";
 	quad3->color = glm::vec3(1.0f, 0.0f, 1.0f);
 	this->nodes.push_back(std::dynamic_pointer_cast<game::Node>(quad3));
 }
@@ -91,6 +93,30 @@ void Game::load_texture(std::string path) {
 			// Free stuff
 			free(buffer);
 			gd_close_gif(gif);
+		}
+	}
+}
+
+void Game::randomize_gifs() {
+	// Get files
+	std::string path = "assets";
+	std::vector<std::string> paths;
+	for (const auto & entry : std::experimental::filesystem::directory_iterator(path)) {
+		paths.push_back(entry.path());
+	}
+
+	for (size_t i = 0; i < this->nodes.size(); i++) {
+		if (std::dynamic_pointer_cast<Quad>(this->nodes[i])) {
+			auto quad = std::dynamic_pointer_cast<Quad>(this->nodes[i]);
+			if (quad->texture != "") {
+				std::random_device random_device;
+				std::mt19937 engine{random_device()};
+				std::uniform_int_distribution<int> dist(0, paths.size() - 1);
+
+				int index = dist(engine);
+				quad->texture = paths[index];
+				paths.erase(paths.begin() + index);
+			}
 		}
 	}
 }

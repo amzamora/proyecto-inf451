@@ -54,6 +54,12 @@ GLFWwindow* graphics::create_window(int width, int height, const char* title) {
 		Game::instance().input.mouse_pos = glm::vec2(xpos - ::width / 2.0f, ::height / 2.0f - ypos);
 	});
 
+	glfwSetKeyCallback(window, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+		if (key == GLFW_KEY_RIGHT && action == GLFW_RELEASE) {
+			Game::instance().randomize_gifs();
+		}
+	});
+
 	// Load opengl functions
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Failed to initialize GLAD" << std::endl;

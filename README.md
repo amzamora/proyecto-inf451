@@ -8,4 +8,4 @@ To do:
     - [x] Hacer picking
 - [x] Poder asignarles texturas
 - [x] Poder asignarles gifs
-- [ ] Randomizar gifs en caras
+- [x] Randomizar gifs en caras
