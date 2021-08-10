@@ -6,4 +6,4 @@ To do:
 - [ ] Poder hacer picking con los cuadrilateros
     - [x] Arrastrar
     - [x] Hacer picking
-- [ ] Poder asignarles texturas
+- [x] Poder asignarles texturas
