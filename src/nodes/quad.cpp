@@ -25,13 +25,6 @@ void Quad::update(GLFWwindow *window) {
 				this->selected = true;
 				Game::instance().quad_selected = true;
 			}
-			else {
-				// if (this->selected) {
-				// 	this->selected = false;
-				// 	Game::instance().quad_selected = false;
-				// 	printf("unselected\n");
-				// }
-			}
 		}
 	}
 	else if (this->dragged) {
@@ -79,8 +72,10 @@ void Quad::draw_ui() {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::Begin("Quad");
+	ImGui::Begin(this->name.c_str());
 	ImGui::ColorEdit3("Color", (float*)&(this->color.r));
+
+	ImGui::InputText("Texture path", &(this->texture));
 
 	ImGui::End();
 

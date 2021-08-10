@@ -12,15 +12,17 @@ Game::Game() {
 	this->nodes.push_back(std::dynamic_pointer_cast<game::Node>(cube));
 
 	std::shared_ptr<Quad> quad1 = std::make_shared<Quad>(glm::vec2(-350.0f, -250.0f));
+	quad1->name = "Quad 1";
 	quad1->color = glm::vec3(0.0f, 1.0f, 1.0f);
-	quad1->texture = "assets/container.jpg";
 	this->nodes.push_back(std::dynamic_pointer_cast<game::Node>(quad1));
 
 	std::shared_ptr<Quad> quad2 = std::make_shared<Quad>(glm::vec2(-250.0f, -250.0f));
+	quad2->name = "Quad 2";
 	quad2->color = glm::vec3(1.0f, 1.0f, 0.0f);
 	this->nodes.push_back(std::dynamic_pointer_cast<game::Node>(quad2));
 
 	std::shared_ptr<Quad> quad3 = std::make_shared<Quad>(glm::vec2(-150.0f, -250.0f));
+	quad3->name = "Quad 3";
 	quad3->color = glm::vec3(1.0f, 0.0f, 1.0f);
 	this->nodes.push_back(std::dynamic_pointer_cast<game::Node>(quad3));
 }

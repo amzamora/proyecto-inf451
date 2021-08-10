@@ -21,6 +21,7 @@ namespace game {
 	};
 
 	struct Node {
+		std::string name = "";
 		glm::vec3 position;
 		glm::vec3 angle;
 		glm::vec3 scale;
