@@ -7,3 +7,5 @@ To do:
     - [x] Arrastrar
     - [x] Hacer picking
 - [x] Poder asignarles texturas
+- [x] Poder asignarles gifs
+- [ ] Randomizar gifs en caras

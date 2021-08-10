@@ -260,16 +260,15 @@ void graphics::draw_quad(std::vector<glm::vec2> vertices, glm::mat4 model, std::
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
-	if (Game::instance().textures.find(texture_path) == Game::instance().textures.end()) {
+	if (Game::instance().animations.find(texture_path) == Game::instance().animations.end()) {
 		Game::instance().load_texture(texture_path);
 	}
-	game::Texture texture = Game::instance().textures[texture_path];
 
 	float data[] = {
-		vertices[0].x, vertices[0].y, 0.0, 1.0,
-		vertices[1].x, vertices[1].y, 0.0, 0.0,
-		vertices[2].x, vertices[2].y, 1.0, 0.0,
-		vertices[3].x, vertices[3].y, 1.0, 1.0
+		vertices[0].x, vertices[0].y, 0.0, 0.0,
+		vertices[1].x, vertices[1].y, 0.0, 1.0,
+		vertices[2].x, vertices[2].y, 1.0, 1.0,
+		vertices[3].x, vertices[3].y, 1.0, 0.0
 	};
 
 	// Pass vertices to the gpu
@@ -320,7 +319,17 @@ void graphics::draw_quad(std::vector<glm::vec2> vertices, glm::mat4 model, std::
 
 	glUniform1i(glGetUniformLocation(shader_program_2d_texture, "ourTexture"), 0);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture.id);
+	if (Game::instance().animations.find(texture_path) != Game::instance().animations.end()) {
+		game::Animation animation = Game::instance().animations[texture_path];
+		if (!animation.playing) {
+			Game::instance().animations[texture_path].play();
+		}
+		Game::instance().animations[texture_path].advance();
+		glBindTexture(GL_TEXTURE_2D, animation.frames[animation.current_frame].id);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
 
 	// Draw
 	glBindVertexArray(VAO);

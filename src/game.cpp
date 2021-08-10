@@ -3,8 +3,7 @@
 #include "nodes/cube.hpp"
 #include "nodes/quad.hpp"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+#include "gifdec/gifdec.h"
 
 Game::Game() {
 	std::shared_ptr<Cube> cube = std::make_shared<Cube>();
@@ -23,6 +22,7 @@ Game::Game() {
 
 	std::shared_ptr<Quad> quad3 = std::make_shared<Quad>(glm::vec2(-150.0f, -250.0f));
 	quad3->name = "Quad 3";
+	quad3->texture = "assets/tumblr.gif";
 	quad3->color = glm::vec3(1.0f, 0.0f, 1.0f);
 	this->nodes.push_back(std::dynamic_pointer_cast<game::Node>(quad3));
 }
@@ -63,26 +63,34 @@ Game::~Game() {
 }
 
 void Game::load_texture(std::string path) {
-	// Load image
-	int width, height, nrChannels;
-	stbi_set_flip_vertically_on_load(true);
+	if (path.substr(path.find_last_of(".") + 1) == "gif") {
+		gd_GIF *gif = gd_open_gif(realpath(path.c_str(), NULL));
+		if (gif) {
+			game::Animation animation = {gif->width, gif->height};
 
-	//printf("%s\n", path.c_str());
-	unsigned char *data = stbi_load(realpath(path.c_str(), NULL), &width, &height, &nrChannels, 0);
+			char *buffer = (char*)malloc(gif->width * gif->height * 3);
+			while (gd_get_frame(gif)) {
+				gd_render_frame(gif, (uint8_t*)buffer);
 
-	// Create texture
-	unsigned int id;
-	glGenTextures(1, &id);
-	glBindTexture(GL_TEXTURE_2D, id);
+				// Create texture
+				unsigned int id;
+				glGenTextures(1, &id);
+				glBindTexture(GL_TEXTURE_2D, id);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gif->width, gif->height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
 
-	game::Texture texture = {id, width, height};
-	this->textures[path] = texture;
+				game::TextureFrame frame = {id, std::chrono::duration<double>(gif->gce.delay / 100.0)};
+				animation.frames.push_back(frame);
+			}
 
-	// Free stuff
-	stbi_image_free(data);
+			this->animations[path] = animation;
+
+			// Free stuff
+			free(buffer);
+			gd_close_gif(gif);
+		}
+	}
 }
