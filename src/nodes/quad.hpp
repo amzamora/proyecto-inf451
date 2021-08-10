@@ -18,9 +18,10 @@ struct Quad : game::Node2d {
 	Quad(glm::vec2 position) : Node2d(position) {}
 	~Quad() {}
 
+	void draw_ui();
+
 private:
 	int is_mouse_on_vertex(glm::vec2 mouse_pos);
-	void draw_ui();
 };
 
 #endif

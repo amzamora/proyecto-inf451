@@ -48,6 +48,13 @@ void Game::draw() {
 		this->nodes[i]->draw();
 	}
 
+	for (size_t i = 0; i < this->nodes.size(); i++) {
+		if (std::dynamic_pointer_cast<Quad>(this->nodes[i])) {
+			std::dynamic_pointer_cast<Quad>(this->nodes[i])->draw_ui();
+		}
+	}
+
+
 	graphics::render();
 }
 

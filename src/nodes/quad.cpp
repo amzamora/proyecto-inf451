@@ -52,10 +52,6 @@ void Quad::draw() {
 	else {
 		graphics::draw_quad(this->vertices, model, this->color);
 	}
-
-	if (this->selected) {
-		this->draw_ui();
-	}
 }
 
 int Quad::is_mouse_on_vertex(glm::vec2 mouse_pos) {
@@ -68,17 +64,19 @@ int Quad::is_mouse_on_vertex(glm::vec2 mouse_pos) {
 }
 
 void Quad::draw_ui() {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
+	if (this->selected) {
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
-	ImGui::Begin(this->name.c_str());
-	ImGui::ColorEdit3("Color", (float*)&(this->color.r));
+		ImGui::Begin(this->name.c_str());
+		ImGui::ColorEdit3("Color", (float*)&(this->color.r));
 
-	ImGui::InputText("Texture path", &(this->texture));
+		ImGui::InputText("Texture path", &(this->texture));
 
-	ImGui::End();
+		ImGui::End();
 
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	}
 }
